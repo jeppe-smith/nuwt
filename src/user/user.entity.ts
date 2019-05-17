@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BeforeInsert,
+  Unique,
+} from 'typeorm'
 import { hash } from 'bcrypt'
 
 export interface UserDTO {
@@ -13,12 +19,17 @@ export interface UserRO {
   name: string
 }
 
+export enum UserConstraints {
+  UQ_EMAIL = 'UQ_USER_EMAIL',
+}
+
 @Entity()
+@Unique(UserConstraints.UQ_EMAIL, ['email'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ unique: true })
+  @Column()
   email: string
 
   @Column()
