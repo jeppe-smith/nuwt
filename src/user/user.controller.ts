@@ -1,6 +1,18 @@
-import { Controller, Get, Param, Put, Body, Post, Delete } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  Put,
+  Body,
+  Post,
+  Delete,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common'
 import { UserService } from './user.service'
-import { UserDTO, UserRO } from './user.entity'
+import { UserDTO, UserRO, UserConstraints } from './user.entity'
+import { QueryFailedError } from 'typeorm'
+import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError'
 
 @Controller('users')
 export class UserController {
@@ -24,6 +36,10 @@ export class UserController {
 
       return user.toReponseObject()
     } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new HttpException('User not found.', HttpStatus.BAD_REQUEST)
+      }
+
       throw error
     }
   }
@@ -49,6 +65,10 @@ export class UserController {
 
       return user.toReponseObject()
     } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new HttpException('User does not exist.', HttpStatus.BAD_REQUEST)
+      }
+
       throw error
     }
   }
@@ -56,8 +76,12 @@ export class UserController {
   @Delete(':id')
   async delete(@Param('id') id: string) {
     try {
-      return this.userService.delete(id)
+      return await this.userService.delete(id)
     } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new HttpException('User does not exist.', HttpStatus.BAD_REQUEST)
+      }
+
       throw error
     }
   }
