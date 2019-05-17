@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import { User, UserDTO } from './user.entity'
+import { UserRepository } from './user.repository'
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   findAll(): Promise<User[]> {
     return this.userRepository.find()
@@ -18,14 +15,14 @@ export class UserService {
   }
 
   findByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ email })
+    return this.userRepository.findOneOrFail({ email })
   }
 
   async create(data: UserDTO): Promise<User> {
     try {
-      const { id } = await this.userRepository.save(data)
+      const user = this.userRepository.create(data)
 
-      return this.findById(id)
+      return this.userRepository.save(user)
     } catch (error) {
       throw error
     }
@@ -41,7 +38,7 @@ export class UserService {
     }
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<boolean> {
     try {
       const { affected } = await this.userRepository.delete(id)
 
