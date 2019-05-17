@@ -10,8 +10,7 @@ import {
   HttpStatus,
 } from '@nestjs/common'
 import { UserService } from './user.service'
-import { UserDTO, UserRO, UserConstraints } from './user.entity'
-import { QueryFailedError } from 'typeorm'
+import { UserDTO, UserRO } from './user.entity'
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError'
 
 @Controller('users')
