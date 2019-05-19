@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { UserModule } from './user/user.module';
-import { ContentTypeModule } from './content-type/content-type.module';
+import { UserModule } from './user/user.module'
+import { NodeModule } from './node/node.module'
+import { NodeTypeModule } from './node-type/node-type.module'
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ContentTypeModule } from './content-type/content-type.module';
       synchronize: true,
     }),
     UserModule,
-    ContentTypeModule,
+    NodeModule,
+    NodeTypeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
